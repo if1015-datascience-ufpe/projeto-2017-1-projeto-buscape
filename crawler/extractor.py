@@ -1,3 +1,7 @@
+import requests
+from bs4 import BeautifulSoup
+
+
 class Extractor(object):
     TABLE_CLS = "product-specs"
     TABLE_ROW_CLS = "product-specs__spec display"
@@ -16,6 +20,11 @@ class Extractor(object):
             "memória interna",
             "memória ram"
         ]
+
+    @staticmethod
+    def extract_page_as_bs(url):
+        request_page = requests.get(url)
+        return BeautifulSoup(request_page.text, "html.parser")
 
     def extract_obj(self, soup_obj):
         table = soup_obj.find("table", class_=self.TABLE_CLS)
