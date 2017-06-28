@@ -6,3 +6,6 @@
 
 #virtual env folder
 env/*
+
+#output folder
+output/*
