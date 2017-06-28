@@ -1,5 +1,6 @@
 import time
 
+from crawler.csv_writer import CSVWriter
 from crawler.extractor import Extractor
 
 
@@ -53,3 +54,7 @@ class BuscapeCrawler(object):
             time.sleep(0.5)
 
         return final_items
+
+    def save_into_csv(self, objs, path):
+        csvwriter = CSVWriter(path)
+        csvwriter.write_objs(objs)
