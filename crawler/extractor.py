@@ -1,5 +1,6 @@
 import re
 import requests
+import unicodedata
 from bs4 import BeautifulSoup
 
 
@@ -109,6 +110,12 @@ class Extractor(object):
         price_tag = soup_obj.find("input", class_=cls.PRICE_CLS, id=cls.PRICE_ID)
         return float(price_tag.get("value", -1))
 
+    @staticmethod
+    def __normalize_str(val):
+        nfkd_form = unicodedata.normalize("NFKD", val)
+        normalized = u"".join([c for c in nfkd_form if not unicodedata.combining(c)])
+        return normalized.lower().replace(" ", "_")
+
     @classmethod
     def extract_obj(cls, soup_obj):
         table = soup_obj.find("table", class_=cls.TABLE_CLS)
@@ -120,7 +127,8 @@ class Extractor(object):
             key = str(data[0].string)
             value = str(data[1].string)
             if key.lower() in cls.FEATURES_NAME:
-                final_obj[key] = cls.__normalize_value(key, value)
+                final_obj[cls.__normalize_str(key)] = \
+                    cls.__normalize_value(key, value)
 
         final_obj["preco"] = cls.__extract_price(soup_obj)
 
