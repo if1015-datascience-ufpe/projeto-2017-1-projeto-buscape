@@ -6,6 +6,8 @@ from bs4 import BeautifulSoup
 class Extractor(object):
     TABLE_CLS = "product-specs"
     TABLE_ROW_CLS = "product-specs__spec display"
+    PRICE_CLS = "extra_params"
+    PRICE_ID = "PriceProduct"
     FEATURES_NAME = [
             "marca",
             "linha",
@@ -103,6 +105,11 @@ class Extractor(object):
         return BeautifulSoup(request_page.text, "html.parser")
 
     @classmethod
+    def __extract_price(cls, soup_obj):
+        price_tag = soup_obj.find("input", class_=cls.PRICE_CLS, id=cls.PRICE_ID)
+        return float(price_tag.get("value", -1))
+
+    @classmethod
     def extract_obj(cls, soup_obj):
         table = soup_obj.find("table", class_=cls.TABLE_CLS)
         t_row = table.tbody.find_all("tr", class_=cls.TABLE_ROW_CLS)
@@ -114,5 +121,7 @@ class Extractor(object):
             value = str(data[1].string)
             if key.lower() in cls.FEATURES_NAME:
                 final_obj[key] = cls.__normalize_value(key, value)
+
+        final_obj["preco"] = cls.__extract_price(soup_obj)
 
         return final_obj
