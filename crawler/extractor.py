@@ -29,52 +29,63 @@ class Extractor(object):
         if match_obj:
             return match_obj.group(group_name)
         else:
-            raise RuntimeError("No match object for str `{}` with regex `{}`".format(
-                value, regex_str))
+            return None
+    
+    @staticmethod
+    def __handle_float(value):
+        if value is not None:
+            value_no_point = value.replace(".", ",")
+            try:
+                return float(value_no_point.replace(",", "."))
+            except RuntimeError:
+                return -1.0
+        else:
+            return -1.0
+
+    @staticmethod
+    def __handle_str(value):
+        return value if value else ""
 
     @staticmethod
     def __normalize_chip_value(value):
-        return Extractor.__match_re("(?P<chip>\w+) chip", "chip", value.lower())
+        return Extractor.__handle_str(
+            Extractor.__match_re("(?P<chip>\w+) chip", "chip", value.lower()))
 
     @staticmethod
     def __normalize_back_camera(value):
-        return float(Extractor.__match_re(
-            "(?P<camera>\d+([\.,]\d+)?) megapixels",
-            "camera", value.lower()))
+        return Extractor.__normalize_str(value).replace("_", " ")
 
     @staticmethod
     def __normalize_frontal_camera(value):
-        return float(Extractor.__match_re(
-            "(?P<camera>\d+([\.,]\d+)?) megapixels frontal",
-            "camera", value.lower()))
+        return Extractor.__normalize_str(value).replace("_", " ")
 
     @staticmethod
     def __normalize_screen_size(value):
-        return float(Extractor.__match_re(
+        return Extractor.__handle_float(Extractor.__match_re(
             "(?P<size>\d+([\.,]\d+)?)( polegadas)?",
             "size", value.lower()))
 
     @staticmethod
     def __normalize_resolution(value):
-        return Extractor.__match_re(
+        return Extractor.__handle_str(Extractor.__match_re(
             "(?P<resolution>\d+ x \d+) pixels",
-            "resolution", value.lower())
+            "resolution", value.lower()))
 
     @staticmethod
     def __normalize_proccessor(value):
-        return float(Extractor.__match_re(
+        return Extractor.__handle_float(Extractor.__match_re(
             "(?P<proc>\d+([\.,]\d+)?)\ ?ghz",
             "proc", value.lower()))
 
     @staticmethod
     def __normalize_internal_memory(value):
-        return float(Extractor.__match_re(
+        return Extractor.__handle_float(Extractor.__match_re(
             "(?P<mem>\d+([\.,]\d+)?)\ ?gb",
             "mem", value.lower()))
     
     @staticmethod
     def __normalize_ram_memory(value):
-        return float(Extractor.__match_re(
+        return Extractor.__handle_float(Extractor.__match_re(
             "(?P<mem>\d+([\.,]\d+)?)",
             "mem", value.lower()))
 
@@ -108,7 +119,7 @@ class Extractor(object):
     @classmethod
     def __extract_price(cls, soup_obj):
         price_tag = soup_obj.find("input", class_=cls.PRICE_CLS, id=cls.PRICE_ID)
-        return float(price_tag.get("value", -1))
+        return Extractor.__handle_float(price_tag.get("value", -1))
 
     @staticmethod
     def __normalize_str(val):
