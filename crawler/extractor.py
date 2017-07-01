@@ -4,8 +4,13 @@ import unicodedata
 from bs4 import BeautifulSoup
 
 
+class HTMLFormationNotImplemented(Exception):
+    pass
+
+
 class Extractor(object):
     TABLE_CLS = "product-specs"
+    SECTION_CLS = "product-details"
     TABLE_ROW_CLS = "product-specs__spec display"
     PRICE_CLS = "extra_params"
     PRICE_ID = "PriceProduct"
@@ -29,27 +34,16 @@ class Extractor(object):
         if match_obj:
             return match_obj.group(group_name)
         else:
-            return None
+            return value
     
     @staticmethod
     def __handle_float(value):
-        if value is not None:
-            value_no_point = value.replace(".", ",")
-            try:
-                return float(value_no_point.replace(",", "."))
-            except RuntimeError:
-                return -1.0
-        else:
-            return -1.0
-
-    @staticmethod
-    def __handle_str(value):
-        return value if value else ""
+        value_no_point = value.replace(".", ",")
+        return float(value_no_point.replace(",", "."))
 
     @staticmethod
     def __normalize_chip_value(value):
-        return Extractor.__handle_str(
-            Extractor.__match_re("(?P<chip>\w+) chip", "chip", value.lower()))
+        return Extractor.__match_re("(?P<chip>\w+) chip", "chip", value.lower())
 
     @staticmethod
     def __normalize_back_camera(value):
@@ -67,9 +61,9 @@ class Extractor(object):
 
     @staticmethod
     def __normalize_resolution(value):
-        return Extractor.__handle_str(Extractor.__match_re(
+        return Extractor.__match_re(
             "(?P<resolution>\d+ x \d+) pixels",
-            "resolution", value.lower()))
+            "resolution", value.lower())
 
     @staticmethod
     def __normalize_proccessor(value):
@@ -92,6 +86,7 @@ class Extractor(object):
     @staticmethod
     def __normalize_value(key, value):
         key = key.lower()
+        value = value.lower()
         if key == "chips":
             return Extractor.__normalize_chip_value(value)
         elif key == "câmera traseira":
@@ -128,19 +123,49 @@ class Extractor(object):
         return normalized.lower().replace(" ", "_")
 
     @classmethod
+    def __extract_table_mode(cls, soup_obj):
+        try:
+            table = soup_obj.find("table", class_=cls.TABLE_CLS)
+            t_row = table.tbody.find_all("tr", class_=cls.TABLE_ROW_CLS)
+            new_obj = {}
+
+            for row in t_row:
+                data = row.find_all("td")
+                key = str(data[0].string)
+                value = str(data[1].string)
+                if key.lower() in cls.FEATURES_NAME:
+                    new_obj[cls.__normalize_str(key)] = \
+                        cls.__normalize_value(key, value)
+
+            return new_obj
+        except AttributeError:
+            return None
+
+    @classmethod
+    def __extract_span_mode(cls, soup_obj):
+        try:
+            table = soup_obj.find("section", class_=cls.SECTION_CLS)
+            new_obj = {}
+
+            for li_item in table.find_all("li"):
+                key = str(li_item.find("span", class_="name").string)
+                value = str(li_item.find("span", class_="value").string)
+                if key.lower() in cls.FEATURES_NAME:
+                    new_obj[cls.__normalize_str(key)] = \
+                        cls.__normalize_value(key, value)
+
+            return new_obj
+        except AttributeError:
+            return None
+
+    @classmethod
     def extract_obj(cls, soup_obj):
-        table = soup_obj.find("table", class_=cls.TABLE_CLS)
-        t_row = table.tbody.find_all("tr", class_=cls.TABLE_ROW_CLS)
-        final_obj = {}
+        new_obj = cls.__extract_table_mode(soup_obj)
 
-        for row in t_row:
-            data = row.find_all("td")
-            key = str(data[0].string)
-            value = str(data[1].string)
-            if key.lower() in cls.FEATURES_NAME:
-                final_obj[cls.__normalize_str(key)] = \
-                    cls.__normalize_value(key, value)
+        if new_obj is None:
+            new_obj = cls.__extract_span_mode(soup_obj)
 
-        final_obj["preco"] = cls.__extract_price(soup_obj)
-
-        return final_obj
+        if new_obj:
+            return new_obj
+        else:
+            raise HTMLFormationNotImplemented()
