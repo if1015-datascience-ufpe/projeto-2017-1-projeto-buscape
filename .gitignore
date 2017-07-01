@@ -9,3 +9,6 @@ env/*
 
 #output folder
 output/*
+
+#log
+*.log
