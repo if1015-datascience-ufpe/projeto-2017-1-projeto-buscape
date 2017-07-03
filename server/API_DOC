@@ -1,0 +1,63 @@
+o servidor roda na porta 6000 e contém basicamente 2 rotas:
+
+GET /categories
+Retorna um JSON contendo todas as features de um celular, contidas no dataset, 
+para cada uma delas, você terá o identificador que a representa (um inteiro) e
+um dicionário indicando todas as categorias dessa feature e o seu devido identificador
+exemplo de resposta no formato exato:
+Repare que o JSON é uma lista de hashs, com os atributos "name" (string), "id" (inteiro) e "group" (hash),,
+onde group contem um hash de string para inteiro
+
+[
+    {
+        "name": "marca", 
+        "id": 1,
+        "groups": {
+                "samsung": 0,
+                "apple": 1,
+                "motorola": 2
+            }
+    },
+    {
+        "name": "processador",
+        "id": 0,
+        "groups": {
+                "1.0": 0,
+                "2.0G+": 2,
+                "3.0": 1
+            }
+
+    }
+]
+
+perceba que os ids podem estar fora de oredm! são apenas hashs :}
+
+------------------
+
+POST /analyse
+Recebe um JSON como entrada contendo o filtro e a categoria,
+o filtro é representado por um hash onde as chaves são os identificadores das features,
+e os valores são os identificadores da categoria dessa feature que você quer q o filtro seja aplicado,
+exemplo de entrada no formato especifico:
+as cahves são: "filters" (hash) e "category"
+{
+    "filters": {
+            "0": 1,
+            "1": 2
+        },
+    "category": 0
+}
+
+Para esse exemplo, vamos considerar que a response de /categories foi a citada lá em cima, 
+então esse JSON de entrada estaria dizendo que o filtro só levará em consideração celulares:
+da PROCESSADOR = 2.0G+ e marca: MOTOROLA, pois o hash é de:
+    0 -> 1  .... 0 indica processador, e 1 é o processaor 2.0G+
+    1 -> 2  .... 1 indica marca,e 2 é a marca motorola  ( vise o json lá de cima )
+a feature a ser processada é a identificada pelo numero 0, ou seja: processador.
+
+a resposta conterá, em formato JSON, uma lista de valores que são os coeficientes,
+se a feature escolhida possui N categorias, a lista de coeficientes conterá N+1 valores, sendo o ultimo
+o que representa a constante.
+
+ex de saída: [1.0, 2.0, 4.0]
+
