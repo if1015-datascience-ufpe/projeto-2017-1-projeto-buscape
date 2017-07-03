@@ -32,5 +32,8 @@ WORKDIR /build
 
 ENV FLASK_APP /build/core/server.py
 
+ENV DATA_SET_PATH /build/resources/data.csv
+ENV TRAIN_HEADER preco
 
+CMD flask run -h 0.0.0.0 -p 6000
 
