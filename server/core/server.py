@@ -2,9 +2,15 @@ from flask import Flask, request, json, jsonify, send_from_directory
 from data_set import DataSet
 from analyser import Analyser
 import json
+import os
 
-DATA_SET_PATH = "../resources/data.csv"
-TRAIN_HEADER = "preco"
+DATA_SET_PATH = os.environ['DATA_SET_PATH']
+TRAIN_HEADER = os.environ['TRAIN_HEADER']
+
+if DATA_SET_PATH is None:
+    DATA_SET_PATH = 'resources/data.csv'
+if TRAIN_HEADER is None:
+    TRAIN_HEADER = 'preco'
 
 app = Flask(__name__)
 
