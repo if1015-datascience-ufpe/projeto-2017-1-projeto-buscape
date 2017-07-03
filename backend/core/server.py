@@ -3,9 +3,12 @@ from data_set import DataSet
 from analyser import Analyser
 import json
 
+DATA_SET_PATH = "../resources/data.csv"
+TRAIN_HEADER = "preco"
+
 app = Flask(__name__)
 
-ds = DataSet.init_from_file("data.csv", "preco")
+ds = DataSet.init_from_file(DATA_SET_PATH, TRAIN_HEADER)
 
 
 @app.route('/categories', methods=['GET'])
