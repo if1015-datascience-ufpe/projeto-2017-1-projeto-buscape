@@ -62,7 +62,7 @@ class Extractor(object):
     @staticmethod
     def __normalize_resolution(value):
         return Extractor.__match_re(
-            "(?P<resolution>\d+ x \d+) pixels",
+            "(?P<resolution>\d+\ ?x\ ?\d+) pixels",
             "resolution", value.lower())
 
     @staticmethod
