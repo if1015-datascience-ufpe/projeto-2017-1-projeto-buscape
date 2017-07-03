@@ -32,7 +32,7 @@ def categories():
         categories.append(cat)
     return str(categories)
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET'])
 def hello():
     return "Hello Analyser!"
 
