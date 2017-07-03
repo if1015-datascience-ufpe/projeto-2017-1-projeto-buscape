@@ -61,3 +61,9 @@ o que representa a constante.
 
 ex de saída: [1.0, 2.0, 4.0]
 
+---------------------------
+
+O servidor está rodando nesse ip/porta: 23.251.151.44:6000
+logo as rotas são:
+GET 23.251.151.44:6000/categories
+POST 23.251.151.44:6000/analyse
