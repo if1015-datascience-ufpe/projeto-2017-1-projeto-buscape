@@ -25,6 +25,8 @@ RUN apt-get install -y libblas-dev liblapack-dev gfortran
 RUN pip3 install --upgrade pip
 RUN pip3 install scipy scikit-learn
 
+RUN pip3 install flask_cors
+
 RUN mkdir /build
 COPY . /build
 
