@@ -57,11 +57,9 @@ class Analyser:
 
                 continue
 
-
             r_row = [0 for k in range(dataset.categories_count[category])]
 
             r_row[dataset.phones_categories[i][category]] = 1
-            r_row.append(1) # constant value
 
             r_matrix.append(r_row)
             r_vector.append(t_value)
