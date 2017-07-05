@@ -1,6 +1,7 @@
 from flask import Flask, request, json, jsonify, send_from_directory
 from data_set import DataSet
 from analyser import Analyser
+from flask_cors import CORS, cross_origin
 import json
 import os
 
@@ -13,9 +14,8 @@ if TRAIN_HEADER is None:
     TRAIN_HEADER = 'preco'
 
 app = Flask(__name__)
-
+CORS(app)
 ds = DataSet.init_from_file(DATA_SET_PATH, TRAIN_HEADER)
-
 
 @app.route('/categories', methods=['GET'])
 def categories():
@@ -32,18 +32,22 @@ def categories():
         categories.append(cat)
     return str(categories)
 
-@app.route('/', methods=['GET'])
+@app.route('/hello', methods=['GET'])
 def hello():
     return "Hello Analyser!"
 
 @app.route('/analyse', methods=['POST'])
 def analyse():
     input_json = request.get_json()
-    filters_dict = input_json['filters']
+    print("## INPUT JSON ##\n" + str(input_json))
 
-    for k,v in filters_dict.items():
-        del filters_dict[k]
-        filters_dict[int(k)] = v
+    if "filters" not in input_json:
+        filters_dict = {}
+    else:
+        filters_dict = input_json["filters"]
+        for k,v in filters_dict.items():
+            del filters_dict[k]
+            filters_dict[int(k)] = v
 
     category = input_json['category']
     print("filters_dict:\n" + str(filters_dict))
