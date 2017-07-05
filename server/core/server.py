@@ -30,7 +30,7 @@ def categories():
         cat["id"] = v
         cat["groups"] = ds.categories[v]
         categories.append(cat)
-    return str(categories)
+    return json.dumps(categories)
 
 @app.route('/hello', methods=['GET'])
 def hello():
