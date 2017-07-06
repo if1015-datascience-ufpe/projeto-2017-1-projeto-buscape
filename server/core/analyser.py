@@ -14,17 +14,10 @@ class Analyser:
     def analyse(filters_dict, category, dataset):
         matrix, train_vector = Analyser.gen_matrix(filters_dict, category, dataset)
 
-        # if category == 7:
-        #    print("MATRIX FOR CAT\n" + str(matrix))
-        #    print("TRAIN VECTOR FOR CAT\n" + str(train_vector))
-
         coefs_indexes, null_columns = Analyser.del_null_columns(matrix)
 
         regr = linear_model.LinearRegression(fit_intercept=True)
         regr.fit(matrix, train_vector)
-
-        # print("## INTERCEPT ##\n" + str(regr.intercept_))
-        # print("intercept ai em cima!")
 
         return  (regr.coef_, regr.intercept_, coefs_indexes, null_columns)
 
@@ -73,7 +66,6 @@ class Analyser:
 
     @staticmethod
     def gen_matrix(filters_dict, category, dataset):
-        # # print("Category: " + str(category) + " | count: " + str(dataset.categories_count[category]))
         r_matrix = []
         r_vector = []
         for i in range(len(dataset.matrix)):
@@ -89,8 +81,6 @@ class Analyser:
             should_jump = should_jump or t_value == None
 
             if should_jump:
-               # print ("Filtering row: " + str(i) + " | for cat: " + str(k) + " | value: " + str(dataset.phones_categories[i][k]) + " | expected: " + str(v))
-
                 continue
 
             r_row = [0 for k in range(dataset.categories_count[category])]
@@ -101,8 +91,6 @@ class Analyser:
             r_matrix.append(r_row)
             r_vector.append(t_value)
 
-        # # print("### r_matrix ###\n" + str(r_matrix))
-        # # print("### r_vector ###\n" + str(r_vector))
         return (r_matrix, r_vector)
 
 # a = False
