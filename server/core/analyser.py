@@ -49,7 +49,8 @@ class Analyser:
 
             r_row = [0 for k in range(dataset.categories_count[category])]
 
-            r_row[dataset.phones_categories[i][category]] = 1
+            if dataset.phones_categories[i][category] != -1:
+                r_row[dataset.phones_categories[i][category]] = 1
 
             r_matrix.append(r_row)
             r_vector.append(t_value)
