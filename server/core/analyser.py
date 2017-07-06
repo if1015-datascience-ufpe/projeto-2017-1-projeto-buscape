@@ -14,15 +14,61 @@ class Analyser:
     def analyse(filters_dict, category, dataset):
         matrix, train_vector = Analyser.gen_matrix(filters_dict, category, dataset)
 
+        # if category == 7:
+        #    print("MATRIX FOR CAT\n" + str(matrix))
+        #    print("TRAIN VECTOR FOR CAT\n" + str(train_vector))
+
+        coefs_indexes, null_columns = Analyser.del_null_columns(matrix)
+
         regr = linear_model.LinearRegression(fit_intercept=True)
         regr.fit(matrix, train_vector)
 
-        print("## INTERCEPT ##\n" + str(regr.intercept_))
-        print("intercept ai em cima!")
+        # print("## INTERCEPT ##\n" + str(regr.intercept_))
+        # print("intercept ai em cima!")
 
-        return  (regr.coef_, regr.intercept_)
+        return  (regr.coef_, regr.intercept_, coefs_indexes, null_columns)
 
 
+    @staticmethod
+    def del_null_columns(matrix):
+        if len(matrix) == 0:
+            return ([[]], [])
+
+        null_columns = []
+
+        # for each columns
+        for c in range(len(matrix[0])):
+            only_zero = False
+            for r in range(len(matrix)):
+                only_zero = only_zero and (matrix[r][c] == 0)
+                if only_zero is False:
+                    break
+
+            # columns with only zeros
+            if only_zero:
+                null_columns.append(c)
+
+        # print(matrix)
+        # print(matrix[0])
+
+        remain = []
+        count = 0 # adjust offset
+        for c in range(len(matrix[0])):
+            if c not in null_columns:
+                remain.append(c)
+
+
+
+        for c in null_columns:
+            for r in matrix:
+                del matrix[r][c-count]
+            count += 1
+
+        mapped_indexes = {}
+        for i in range(len(matrix[0])):
+            mapped_indexes[i] = remain[i]
+
+        return (mapped_indexes, null_columns)
 
 
     @staticmethod
