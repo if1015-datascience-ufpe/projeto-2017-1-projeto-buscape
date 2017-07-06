@@ -69,15 +69,15 @@ class DataSet:
                     pass
 
     def print_config(self):
-        print("train category: " + str(self.train_category) + " | id: " + str(self.tc))
-        print("headers: " + str(self.headers_map))
-        print("matrix length: " + str(len(self.matrix)))
-        print("headers length: " + str(len(self.headers_map)))
-        print("matrix col size: " + str(len(self.matrix[0])))
-        print("Categories count: " + str(self.categories_count))
+        # print("train category: " + str(self.train_category) + " | id: " + str(self.tc))
+        # print("headers: " + str(self.headers_map))
+        # print("matrix length: " + str(len(self.matrix)))
+        # print("headers length: " + str(len(self.headers_map)))
+        # print("matrix col size: " + str(len(self.matrix[0])))
+        # print("Categories count: " + str(self.categories_count))
         PU.pmat(self.phones_categories, "Phones Categories")
 
-        # print("Matrix:" + str(self.matrix))
+        # # print("Matrix:" + str(self.matrix))
 
     # access train vector for row index (ri)
     def get_train_value(self, ri):
@@ -92,7 +92,7 @@ class DataSet:
         ds.init_maps()
         for i in range(len(ds.headers_map)):
             ds.categories_count.append(ds.count_categories(i))
-#        print("phones categories: " + str(ds.phones_categories))
+#        # print("phones categories: " + str(ds.phones_categories))
 
         return ds
 

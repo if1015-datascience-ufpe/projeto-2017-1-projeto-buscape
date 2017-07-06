@@ -13,31 +13,21 @@ class Analyser:
     @staticmethod
     def analyse(filters_dict, category, dataset):
         matrix, train_vector = Analyser.gen_matrix(filters_dict, category, dataset)
-        # print ("Dimensions:\n")
-        # print("Matrix: " + str(len(matrix)) +"x" + str(len(matrix[0])))
-        # print("Vector: " + str(len(train_vector)) +"x1")
-        # Create linear regression object
-        regr = linear_model.LinearRegression()
 
-        # Train the model using the training sets
-
-        # print("### Matrix ####" + str(matrix) + "\n" + "#### train vector ####" + str(train_vector))
+        regr = linear_model.LinearRegression(fit_intercept=True)
         regr.fit(matrix, train_vector)
 
-        # The coefficients
-        # print('Coefficients: \n', regr.coef_)
-        # The mean squared error
-        # print("Mean squared error: %.2f"
-        #     % np.mean((regr.predict(matrix) - train_vector) ** 2))
-        # Explained variance score: 1 is perfect prediction
-        # print('Variance score: %.2f' % regr.score(matrix, train_vector))
+        print("## INTERCEPT ##\n" + str(regr.intercept_))
+        print("intercept ai em cima!")
 
-        return  regr.coef_
+        return  (regr.coef_, regr.intercept_)
+
+
 
 
     @staticmethod
     def gen_matrix(filters_dict, category, dataset):
-        # print("Category: " + str(category) + " | count: " + str(dataset.categories_count[category]))
+        # # print("Category: " + str(category) + " | count: " + str(dataset.categories_count[category]))
         r_matrix = []
         r_vector = []
         for i in range(len(dataset.matrix)):
@@ -64,8 +54,8 @@ class Analyser:
             r_matrix.append(r_row)
             r_vector.append(t_value)
 
-        # print("### r_matrix ###\n" + str(r_matrix))
-        # print("### r_vector ###\n" + str(r_vector))
+        # # print("### r_matrix ###\n" + str(r_matrix))
+        # # print("### r_vector ###\n" + str(r_vector))
         return (r_matrix, r_vector)
 
 # a = False
@@ -75,8 +65,6 @@ if a:
     ds = DataSet.init_from_file("data.csv", "preco")
     ds.print_config()
 
-    print("matrix[0]: " + str(ds.matrix[0]))
-    print("matrix[0][9]: " + str(ds.matrix[0][9]))
 
     coef = Analyser.analyse({}, 6, ds)
 
