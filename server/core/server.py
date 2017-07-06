@@ -20,7 +20,7 @@ ds = DataSet.init_from_file(DATA_SET_PATH, TRAIN_HEADER)
 @app.route('/categories', methods=['GET'])
 def categories():
     categories = []
-    ds.print_config()
+    # ds.print_config()
     # print("### DS CATEGORIES ###\n" + str(ds.categories))
     # print("### categories size: " + str(len(ds.categories)))
 
@@ -52,14 +52,17 @@ def analyse():
     category = input_json['category']
     # print("filters_dict:\n" + str(filters_dict))
     # print("category: "  + str(category))
-    coefs, intercept = Analyser.analyse(filters_dict, category, ds)
+    coefs, intercept, coefs_indexes, null_columns = Analyser.analyse(filters_dict, category, ds)
 
     result = coefs.tolist()
-    result.append(intercept.tolist())
+    # result.append(intercept.tolist()) # append intercept
 
     # print("Coeficientes: " + str(coefs))
     # print("coef type:" + str(type(coefs)))
-    return json.dumps(result)
+
+    output = {"coefs": result, "intercept": intercept.tolist(), "coefs_indexes": coefs_indexes, "null_types": null_columns}
+
+    return json.dumps(output)
 
 
 @app.route('/intercept', methods=['POST'])
