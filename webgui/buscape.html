@@ -1,0 +1,57 @@
+<html>
+  	<meta charset="UTF-8">
+	<script src="js/jquery-latest.min.js"
+	        type="text/javascript"></script>
+	<script src="js/ajax.jquery.min.js"
+	        type="text/javascript"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="js/buscape.js"
+	        type="text/javascript"></script>
+	
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	
+	<style type="text/css">
+		#main-div{
+			display: block;
+			margin: auto;
+		}
+		.control {
+		    text-align: center;
+		}
+		.filter {
+		    margin-top: 10px;
+		}
+		.center{
+			text-align: center;
+		}
+		.jumbotron{
+			height: 146px;
+    		padding: 3px;
+		}
+	</style>
+
+	<body>
+		<div class="jumbotron">
+		  <div class="container text-center">
+		    <h1>Buscapé Celular</h1>      
+		    <p>Analise as Features dos Celulares!</p>
+		  </div>
+		</div>
+		<div id="loading" class="row"><div  class="col-sm-12 center">Loading...</div></div>
+		<div class="row" id="main">
+			<div class="col-sm-3 control" >
+			  	<select id="feature" class="dropdown">
+						<option value="empty">Selecione</option>
+					</select>
+					<button id="btn-feature">Selecionar</button>
+			  	<ul class="filter">
+				</ul>
+			</div>
+			<div class="col-sm-9"> 
+			  	<div id="chart_div"></div>
+			</div>
+		</div>
+	</body>
+</html>
+
